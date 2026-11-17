@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+
+devices_json=$(mktemp)
+trap 'rm -f "$devices_json"' EXIT
+xcrun devicectl list devices --quiet --json-output "$devices_json"
+device=${DEVICE:-$(jq -r '
+  [.result.devices[]
+   | select(.hardwareProperties.reality == "physical"
+            and .hardwareProperties.deviceType == "iPhone"
+            and .connectionProperties.tunnelState != "unavailable")
+  ][0].hardwareProperties.udid // empty' "$devices_json")}
+if [[ -z $device ]]; then
+  echo "接続中の iPhone がない。iPhone をつないでロックを解除し、もう一度実行する" >&2
+  exit 69
+fi
+
+keychain=~/Library/Keychains/login.keychain-db
+if ! security show-keychain-info "$keychain" >/dev/null 2>&1; then
+  echo "コード署名のためにログインキーチェーンを解錠する（パスワードは保存しない）" >&2
+  security unlock-keychain "$keychain"
+fi
+
+scripts/on-mac/gen
+xcodebuild build -quiet \
+  -project Practical.xcodeproj -scheme Practical \
+  -destination generic/platform=iOS \
+  -derivedDataPath DerivedData \
+  -allowProvisioningUpdates "$@"
+
+app=DerivedData/Build/Products/Debug-iphoneos/Practical.app
+bundle_id=$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$app/Info.plist")
+xcrun devicectl device install app --quiet --device "$device" "$app"
+xcrun devicectl device process launch --quiet --device "$device" "$bundle_id"
+echo "インストールして起動した：$bundle_id → $device"
