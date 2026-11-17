@@ -15,6 +15,7 @@ Commands:
 $(cd "$repo_root/scripts/on-mac" && for f in *; do [[ -x $f ]] && printf '  %s\n' "$f"; done)
 
 <command> は同期してから scripts/on-mac/<command> を Mac で実行する。
+format だけは、Mac で整形した *.swift をこのリポジトリに書き戻す。
 EOF
 }
 
@@ -25,6 +26,11 @@ sync_to_mac() {
     --exclude-from="$repo_root/.gitignore" \
     -e "ssh ${ssh_opts[*]}" \
     "$repo_root/" "mac:$remote_dir/"
+}
+
+pull_swift_from_mac() {
+  git -C "$repo_root" ls-files -co --exclude-standard -- '*.swift' |
+    rsync -az --files-from=- -e "ssh ${ssh_opts[*]}" "mac:$remote_dir/" "$repo_root/"
 }
 
 run_on_mac() {
@@ -47,5 +53,6 @@ case $command in
     shift
     sync_to_mac
     run_on_mac "scripts/on-mac/$command" "$@"
+    if [[ $command == format ]]; then pull_swift_from_mac; fi
     ;;
 esac

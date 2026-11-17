@@ -13,5 +13,5 @@ let package = Package(
         .target(name: "KeyboardCore", swiftSettings: strict),
         .testTarget(name: "KeyboardCoreTests", dependencies: ["KeyboardCore"], swiftSettings: strict),
     ],
-    swiftLanguageModes: [.v6]
+    swiftLanguageModes: [.v6],
 )

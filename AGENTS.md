@@ -17,6 +17,7 @@
 | 設定画面の項目を増やさない（D-40） | 文書：上の「判断が要る規則」 |
 | 入力・変換・設定のロジックは共有パッケージ `PracticalKit` に置く（D-60） | 設計：単体テストは `PracticalKit` にしかない（`scripts/mac test`） |
 | テストするモジュールは UIKit に依存しない（D-61） | 設計：テストを macOS の `swift test` で実行するため、`import UIKit` があるとビルドが失敗する |
+| Swift の整形は手で直さず `scripts/mac format` で揃える | リンター：`scripts/mac lint`（`swiftformat --lint` と `swiftlint --strict`）。独自ルールは足さず、2回起きた誤りだけを足す |
 | 自分で書く Swift は Swift 6 言語モードで、警告を残さない | 型：`Package.swift` の `swiftLanguageModes: [.v6]` と `treatAllWarnings(as: .error)` |
 
 ## 観察中の誤り
