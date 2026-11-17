@@ -1,11 +1,11 @@
 # Practical
 
-iOS 向けの日本語キーボード（自分用）。メモ段階。
+iOS 向けの日本語・英字キーボード（自分用）。仕様は [docs/spec.md](docs/spec.md) を参照。
 
 ## 方針
 - iOS には標準キーボードを拡張する仕組みがないため、独立したカスタムキーボード（Keyboard Extension）として作る。
-- 第1段階：文字キーを持たない補助キーボード。地球儀キーで標準キーボードと切り替えて使う（Raycast Keyboard の Secondary モードに相当）。
-- 第2段階：かな漢字変換を載せ、標準と置き換えて使える主キーボードにする。変換器の選定は保留。
+- 最初のリリースから、標準キーボードの代わりに使う主キーボードにする。フリックによるかな入力と、かな漢字変換（AzooKeyKanaKanjiConverter と Zenzai）を載せる。
+- 補助機能は後の段階で同じキーボードに追加する（段階計画は [docs/spec.md](docs/spec.md) の §7）。
 
 ## やりたいこと
 - スニペット・定型文の挿入
@@ -16,4 +16,4 @@ iOS 向けの日本語キーボード（自分用）。メモ段階。
 
 ## 参考
 - [Raycast Manual: Keyboard](https://manual.raycast.com/ios/keyboard)
-- azooKey（OSS の日本語キーボード・変換エンジン）
+- [azooKey](https://github.com/azooKey/azooKey)（OSS の日本語キーボード・変換エンジン）
