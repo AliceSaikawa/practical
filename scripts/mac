@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Linux 上のリポジトリを Mac に同期し、scripts/on-mac/<command> を SSH 越しに実行する（D-63）。
+set -euo pipefail
+
+repo_root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
+remote_dir="dev/practical-sync/$(basename "$repo_root")"
+ssh_opts=(-F "$HOME/.ssh/config")
+
+usage() {
+  cat <<EOF
+Usage: scripts/mac <command> [args...]
+
+Commands:
+  sync        Mac の ~/$remote_dir に同期するだけ
+$(cd "$repo_root/scripts/on-mac" && for f in *; do [[ -x $f ]] && printf '  %s\n' "$f"; done)
+
+<command> は同期してから scripts/on-mac/<command> を Mac で実行する。
+EOF
+}
+
+sync_to_mac() {
+  ssh "${ssh_opts[@]}" mac "mkdir -p ~/$remote_dir"
+  rsync -az --delete \
+    --exclude=/.git --exclude=/.agents \
+    --exclude-from="$repo_root/.gitignore" \
+    -e "ssh ${ssh_opts[*]}" \
+    "$repo_root/" "mac:$remote_dir/"
+}
+
+run_on_mac() {
+  local tty=()
+  [[ -t 0 && -t 1 ]] && tty=(-t)
+  ssh "${ssh_opts[@]}" "${tty[@]}" mac \
+    "export PATH=/opt/homebrew/bin:\$PATH; cd ~/$remote_dir && $(printf '%q ' "$@")"
+}
+
+command=${1:-}
+case $command in
+  "" | -h | --help) usage ;;
+  sync) sync_to_mac ;;
+  *)
+    if [[ ! -x $repo_root/scripts/on-mac/$command ]]; then
+      echo "unknown command: $command" >&2
+      usage >&2
+      exit 64
+    fi
+    shift
+    sync_to_mac
+    run_on_mac "scripts/on-mac/$command" "$@"
+    ;;
+esac

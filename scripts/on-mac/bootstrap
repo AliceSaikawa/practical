@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+
+brew bundle --file=Brewfile --quiet
+
+xcodebuild -version | head -1
+swift --version 2>&1 | head -1
+echo "xcodegen $(xcodegen --version)"
+echo "swiftlint $(swiftlint version)"
+echo "swiftformat $(swiftformat --version)"
