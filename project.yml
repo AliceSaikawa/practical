@@ -1,0 +1,64 @@
+name: Practical
+options:
+  deploymentTarget:
+    iOS: "17.0"
+packages:
+  PracticalKit:
+    path: PracticalKit
+settings:
+  base:
+    APP_BUNDLE_ID: com.alicesaikawa.practical
+    DEVELOPMENT_TEAM: DPDNZ82WD8
+    CODE_SIGN_STYLE: Automatic
+    MARKETING_VERSION: "0.1"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    SWIFT_VERSION: "6.0"
+    SWIFT_TREAT_WARNINGS_AS_ERRORS: YES
+    GCC_TREAT_WARNINGS_AS_ERRORS: YES
+targets:
+  Practical:
+    type: application
+    platform: iOS
+    sources: [App]
+    dependencies:
+      - target: PracticalKeyboard
+      - package: PracticalKit
+        product: KeyboardCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID)
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Practical
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UIRequiresFullScreen: YES
+  PracticalKeyboard:
+    type: app-extension
+    platform: iOS
+    sources: [Keyboard]
+    dependencies:
+      - package: PracticalKit
+        product: KeyboardCore
+    info:
+      path: Keyboard/Info.plist
+      properties:
+        CFBundleDisplayName: Practical
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.keyboard-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
+          NSExtensionAttributes:
+            PrimaryLanguage: ja-JP
+            IsASCIICapable: false
+            PrefersRightToLeft: false
+            RequestsOpenAccess: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).keyboard
+schemes:
+  Practical:
+    build:
+      targets:
+        Practical: all
