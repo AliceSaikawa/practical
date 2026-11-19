@@ -4,8 +4,8 @@ cd "$(dirname "$0")/../.."
 
 brew bundle --file=Brewfile --quiet
 
-xcodebuild -version | head -1
-swift --version 2>&1 | head -1
+xcodebuild -version | sed -n 1p
+swift --version 2>&1 | sed -n 1p
 echo "xcodegen $(xcodegen --version)"
 echo "swiftlint $(swiftlint version)"
 echo "swiftformat $(swiftformat --version)"
