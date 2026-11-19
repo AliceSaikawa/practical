@@ -14,6 +14,8 @@
 | 規則 | 強制手段 |
 |---|---|
 | Mac でのビルド・テスト・インストールは `scripts/mac <command>` を通す。Linux に Swift を入れない（D-63） | 設計：`scripts/mac` が同期と SSH 実行を受け持ち、Mac 側の手順は `scripts/on-mac/` だけに置く |
+| 実機へのインストールは `scripts/mac install` で行い、無料アカウントで署名する（D-01） | 設計：`project.yml` の `DEVELOPMENT_TEAM` と `scripts/on-mac/install` の `-allowProvisioningUpdates` |
+| 触覚、実際の文字入力、メモリ、遅延は実機で確かめる（D-71） | 文書：[docs/device-checklist.md](docs/device-checklist.md)。機能を足す PR が確認項目を足す |
 | 設定画面の項目を増やさない（D-40） | 文書：上の「判断が要る規則」 |
 | Xcode の設定は `project.yml` だけで変える。`.xcodeproj` と拡張の `Info.plist` は生成物で、Git に入れない（D-62） | 設計：`.gitignore` で除外し、`scripts/on-mac/gen` が毎回生成する |
 | iPhone のみ・iOS 17 以上、完全アクセスを求める、Bundle ID は `APP_BUNDLE_ID` から作る（D-03、D-04、D-64） | 設計：`project.yml` の1か所で定義する。`Package.swift` の `.iOS(.v17)` もそろえる |
