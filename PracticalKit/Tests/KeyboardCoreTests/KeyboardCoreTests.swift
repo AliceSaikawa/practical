@@ -1,2 +1,2 @@
-import Testing
 @testable import KeyboardCore
+import Testing
