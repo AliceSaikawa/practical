@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+scripts/on-mac/gen
+xcodebuild build -quiet \
+  -project Practical.xcodeproj -scheme Practical \
+  -destination generic/platform=iOS \
+  -derivedDataPath DerivedData \
+  CODE_SIGNING_ALLOWED=NO "$@"
